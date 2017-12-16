@@ -1,0 +1,40 @@
+.row > div{
+	padding: 5px;
+}
+
+#tabela-pedidos th, td{
+	text-align: center;
+}
+
+#tabela-pedidos th{
+	background-color: #00ADEF;
+	color: #FFF;
+}
+
+#tabela-detalhes tr td{
+	text-align: left;
+}
+
+#tabela-detalhes tr th, #exibeItens tr th{
+	background-color: #f0f0f0;
+	padding: 8px;
+	font-weight: bold;
+}
+
+#exibeDocumentos{
+	margin-bottom:20px;
+}
+
+.center-header-table{line-height: 45px !important;}
+.center-column{line-height: 40px !important;}
+
+#parteProduto{
+	border-radius: 0;
+}
+
+.textoHeader{
+	color:#069;
+	font-weight: bold;
+}
+
+#camadaefeitos{display:none;}

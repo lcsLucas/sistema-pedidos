@@ -185,21 +185,31 @@ class Produto
     {
         $lista = array();
         $total = 0.0;
-        foreach ($_SESSION['produtos'] as $codigo => $qtde) {
-            $prodDAO = new ProdutoDAO();
-            $result = $prodDAO->obterProduto($codigo, $_SESSION['clienteAtual']);
-            $preco = 0.0;
-            $subTotal = 0.0;
-            if (!empty($result['cli_pro_preco'])) :
-                $preco = $result['cli_pro_preco'];
-            else :
-                $preco = $result['prod_preco'];
-            endif;
-            $subTotal = floatval($preco * $qtde);
-            $total += $subTotal;
-            array_push($lista, [$codigo, $result['prod_descricao'], $qtde, number_format($preco, 2, ',', '.'),
-                number_format($subTotal, 2, ',', '.'), number_format($total, 2, ',', '.')]);
-        }
+        
+        if (!empty($_SESSION['config'])) {
+            foreach ($_SESSION['produtos'] as $codigo => $qtde) {
+                $prodDAO = new ProdutoDAO();
+                $result = $prodDAO->obterProduto($codigo, $_SESSION['clienteAtual']);
+                $preco = 0.0;
+                $subTotal = 0.0;
+                if (!empty($result['cli_pro_preco'])) :
+                    $preco = $result['cli_pro_preco'];
+                else :
+                    $preco = $result['prod_preco'];
+                endif;
+                $subTotal = floatval($preco * $qtde);
+                $total += $subTotal;
+                array_push($lista, [$codigo, $result['prod_descricao'], $qtde, number_format($preco, 2, ',', '.'),
+                    number_format($subTotal, 2, ',', '.'), number_format($total, 2, ',', '.')]);
+            }
+        } else {
+            foreach ($_SESSION['produtos'] as $codigo => $qtde) {
+                $prodDAO = new ProdutoDAO();
+                $result = $prodDAO->obterProduto2($codigo);
+                array_push($lista, [$codigo, $result['prod_descricao'], $qtde]);
+            }
+        }        
+
         return $lista;
     }
 }

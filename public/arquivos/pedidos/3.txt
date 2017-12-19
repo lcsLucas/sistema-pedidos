@@ -1,11 +1,11 @@
-ped_num:2
-ped_data:2017-12-16 17:09:50
+ped_num:3
+ped_data:2017-12-19 10:42:17
 ped_pag:1
 ped_obs:
 ven_cod:1
 cli_cod:1
 
 prod_cod:1
-prod_qtde:100
+prod_qtde:1
 prod_val:0.10
-prod_subT:10,00
+prod_subT:0,10

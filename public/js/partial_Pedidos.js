@@ -3,38 +3,58 @@
 		var vUni = $('#txtValUni');
 		var qtde = $('#txtQtde');
 		var subT = $('#txtSubTot');
+                var monet = $('#txtMonetario').val();
 
 		if ($('#selCliente').prop('selectedIndex') > 0) {
-        	$( "#btnConfCliente" ).trigger( "click" );
-    	};
+                    $( "#btnConfCliente" ).trigger( "click" );
+                };
+                
+                if(monet === "1") {//valor monetario
+                    $('#parteProduto').on('select2:select', function (evt) {
+                            qtde.val('');
+                            subT.val('');
+                            if (prod.prop('selectedIndex') > 0) {
+                                    vUni.val(prod.select2().find(":selected").data("preco"));
+                                    qtde.focus();
+                            } else{
+                                    vUni.val('');
+                            }
+                    });
 
-		$('#parteProduto').on('select2:select', function (evt) {
-			qtde.val('');
-			subT.val('');
-			if (prod.prop('selectedIndex') > 0) {
-				vUni.val(prod.select2().find(":selected").data("preco"));
-				qtde.focus();
-			} else{
-				vUni.val('');
-			}
-		});
+                    qtde.keyup(function () {  //validações cada vez que o usuario digita algo no campo Qtde
+                        conteudo = apenasNumeros($(this).val());
+                        $(this).val(conteudo);
+                        var calc = 0.00;
+                        var uni = vUni.val();
+                        uni = uni.replace(".","").replace(",",".");
+                        calc = conteudo * uni;
+                        subT.val(number_format(calc, 2, ',', '.'));
+                    });
+                    qtde.blur(function () {
+                        if (isNaN($(this).val())) {
+                            $(this).val("");
+                            subT.val("");
+                        }
+                    });
+                } else {//sem valor monetario
+                    $('#parteProduto').on('select2:select', function (evt) {
+                        qtde.val('');
+                        if (prod.prop('selectedIndex') > 0) {
+                                qtde.focus();
+                        }
+                    });
 
-	    qtde.keyup(function () {  //validações cada vez que o usuario digita algo no campo Qtde
-	        conteudo = apenasNumeros($(this).val());
-	        $(this).val(conteudo);
-	        var calc = 0.00;
-	        var uni = vUni.val();
-	        uni = uni.replace(".","").replace(",",".");
-	        calc = conteudo * uni;
-	        subT.val(number_format(calc, 2, ',', '.'));
-	    });
-	    qtde.blur(function () {
-	        if (isNaN($(this).val())) {
-	            $(this).val("");
-	            subT.val("");
-	        }
-	    });
-
+                    qtde.keyup(function () {  //validações cada vez que o usuario digita algo no campo Qtde
+                        conteudo = apenasNumeros($(this).val());
+                        $(this).val(conteudo);
+                    });
+                    qtde.blur(function () {
+                        if (isNaN($(this).val())) {
+                            $(this).val("");
+                        }
+                    });
+                }
+                
 	    $('#tabela-pedidos').on('click', 'a', function () {
 	    	if($(this).hasClass('link-excluir'))
 	    	{

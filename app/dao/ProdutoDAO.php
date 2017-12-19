@@ -158,6 +158,26 @@ class ProdutoDAO extends Banco
         endif;
         return null;
     }
+    public function obterProduto2($codigoProd)
+    {
+        if(!empty($this->Conectar())) :
+            try
+            {
+                $sql = "select prod_codigo, prod_descricao
+                    from produto where prod_codigo = :produto";
+
+                $stms = $this->getCon()->prepare($sql);
+                $stms->bindValue(":produto", $codigoProd, \PDO::PARAM_STR);
+                $stms->execute();
+                return $stms->fetch();
+            }
+            catch(\PDOException $e)
+            {
+                $this->setRetorno($e->getCode(),2,"Erro Ao Fazer a Consulta No Banco de Dados | ".$e->getMessage());
+            }
+        endif;
+        return null;
+    }
     public function obterTodosCliente($codigoCliente)
     {
         if(!empty($this->Conectar())) :

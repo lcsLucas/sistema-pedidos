@@ -277,6 +277,15 @@ class Init extends Bootstrap
             'action' => 'buscarMaisDocumentos',
             'param' => []
         );
+        
+        //Rotas Config
+        $array[] = array(
+            'route' => 'Area-Restrita/Config/Monetario',
+            'method' => 'POST',
+            'controller' => 'home',
+            'action' => 'modificaMonetario',
+            'param' => []
+        );
 
         /*Setando na propriedades as rotas definidas à cima.*/
         $this->setRoutes($array);

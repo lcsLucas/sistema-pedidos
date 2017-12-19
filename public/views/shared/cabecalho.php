@@ -67,10 +67,22 @@ if (! defined('ABSPATH')){
                         </a>
                         <ul class="dropdown-menu">
                             <?php if(!empty($_SESSION["UsuarioStatus"]) && $_SESSION["UsuarioStatus"] === '1'){ ?>
+                            <li class="text-center">
+                                <label for="ckMonetario">Valor Monetário</label>
+                                <br />
+                                <label class="switch">
+                                    <input class="<?= !empty($_SESSION["config"])? "initil-input-checked" : "" ?>" id="ckMonetario" type="checkbox"<?= !empty($_SESSION["config"])? "checked" : "" ?>>
+                                  <span class="slider round"></span>
+                                </label>
+                            </li>
+                            <li role="separator" class="divider"></li>
                             <li><a href="/Area-Restrita/Usuario/GerenciarUsuarios">Gerenciar Usuários</a></li>
                             <li><a href="/Admin/Dados/Importacao">Importação de Dados</a></li>
                             <?php } ?>
-                            <li><a href="/Area-Restrita/Usuario/AlterarSenha">Mudar a Senha</a></li>
+                            <li>
+                                <input type="hidden" id="txtMonetario" value="<?= !empty($_SESSION["config"])? "1" : "0" ?>" />
+                                <a href="/Area-Restrita/Usuario/AlterarSenha">Mudar a Senha</a>
+                            </li>
                             <li><a href="/Area-Restrita/Logout">Sair</a></li>
                         </ul>
                     </li>

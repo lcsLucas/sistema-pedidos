@@ -17,7 +17,7 @@ class UsuarioDAO extends Banco{
        if(!empty($this->Conectar())) :
            try
             {
-                $stms = $this->getCon()->prepare("SELECT usu_codigo,usu_nome,usu_senha, usu_status FROM usuario WHERE usu_email = :email AND usu_ativo = '1' LIMIT 1");
+                $stms = $this->getCon()->prepare("SELECT usu_codigo,usu_nome,usu_senha, usu_status,option_monetaria  FROM usuario,config WHERE usu_email = :email AND usu_ativo = '1' LIMIT 1");
                 $stms->bindValue(":email", $email, \PDO::PARAM_STR);
                 $stms->execute();
                 return $stms->fetch();
@@ -186,5 +186,22 @@ class UsuarioDAO extends Banco{
         }
       endif;
       return false;
+    }
+    
+    public function modificaMonetario($monetario) {
+        if(!empty($this->Conectar())) :
+          try
+          {
+            $stms = $this->getCon()->prepare("update config set option_monetaria = :monetario");
+            $stms->bindValue(":monetario", $monetario, \PDO::PARAM_STR);
+
+            return $stms->execute();
+          }
+          catch(\PDOException $e)
+          {
+            $this->setRetorno($e->getCode(),2,"Erro Ao Executar o Comando No Banco de Dados | ".$e->getMessage());
+          }
+        endif;
+        return false;
     }
 }

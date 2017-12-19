@@ -1,5 +1,7 @@
-window.onload = function() {
+var monet = $('#txtMonetario').val();
 
+window.onload = function() {    
+    
     $(".select2").select2();
 
     //mostrar apos carregar pagina
@@ -537,11 +539,19 @@ window.onload = function() {
                     $('#tabela-pedidos a').css("pointer-events","visible");
                     $('#addProduto, #btnEnviarPed').prop("disabled",false);
                     $('#tabela-pedidos tbody').html("");
-                    for (i = 0; i < dado.length; i++) {
-                        addTableRow(i+1, dado[i][0], dado[i][1], dado[i][2], dado[i][3], dado[i][4]);
-                    }
-                    var ultimo = dado.length-1;
-                    $('#valorTotal').text(dado[ultimo][5]);
+                    
+                    if(monet === "1"){//monetario
+                        for (i = 0; i < dado.length; i++) {
+                            addTableRow(i+1, dado[i][0], dado[i][1], dado[i][2], dado[i][3], dado[i][4]);
+                        }
+                        var ultimo = dado.length-1;
+                        $('#valorTotal').text(dado[ultimo][5]);
+                    } else {//Ñ monetario
+                        for (i = 0; i < dado.length; i++) {
+                            addTableRow(i+1, dado[i][0], dado[i][1], dado[i][2],"","");
+                        }
+                    } 
+                    
                     $("#selProduto").val($("#selProduto option:first").val());
                     $('#selProduto').trigger('change.select2');
                     $('#formaddProd input[type="text"]').val("");
@@ -570,6 +580,33 @@ window.onload = function() {
         $("#mostrarDetalhe").toggle();
         return false;
     });
+    
+    $('#ckMonetario').click(function(){
+        $.ajax({
+            type:'POST',
+            url: '/Area-Restrita/Config/Monetario',
+            data: 'optMonetario='+$(this).prop("checked"),
+            dataType: 'json',
+            beforeSend: function() {
+                
+            }
+        }).done(function(data){
+                bootbox.alert({
+                    closeButton: false,
+                    size: 'large',
+                    message: "<span class=\"btn-lg\">"+data["Mensagem"]+"</span>",
+                    callback: function () {
+                        if (data["Tipo"] === 1)
+                            location.href = "/Area-Restrita/Logout";
+                    }
+                });
+        }).fail(function(){
+            if($('#ModalErro').length < 1){
+                $('body').append(criaModalErro);
+            }
+            $( "#btTrigger" ).trigger( "click" );
+        });
+    });   
 };
 
 function criaModalErro(){
@@ -626,8 +663,10 @@ function addTableRow(seq, cod, nome, qtde, preco, subT) {
     cols += '<td>' + seq + '</td>';
     cols += '<td>' + nome + '</td>';
     cols += '<td>' + qtde + '</td>';
-    cols += '<td>' + preco + '</td>';
-    cols += '<td>' + subT + '</td>';
+    if(monet === "1") {
+        cols += '<td>' + preco + '</td>';
+        cols += '<td>' + subT + '</td>';
+    }
     cols += '<td>';
     cols += '<a data-id="'+cod+'" href="/Area-Restrita/Pedido/remProduto"><img title="Excluir Produto" class="exc" alt="Excluir Produto" src="/public/img/img_delete.png" /><br />Excluir</a>';
     cols += '</td>';

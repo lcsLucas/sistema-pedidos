@@ -41,8 +41,15 @@ class HomeController extends Action
     /*renderiza pagina dashboard*/
     public function dashboard()
     {
-            $this->dados->title = "Dashboard";
-            $this->render('dashboard');
+        $ped = new \App\model\Pedido();
+        
+        $this->dados->itensPagina = 10;
+        $this->dados->pagina = 0;
+        $this->dados->pagina *= $this->dados->itensPagina;
+        $this->dados->resultado = $ped->obterPorLimite($this->dados->pagina, $this->dados->itensPagina);
+        
+        $this->dados->title = "Dashboard";
+        $this->render('dashboard');
     }
     
     public function index()
@@ -119,5 +126,21 @@ class HomeController extends Action
         
         header("Location: /");
         exit();
+    }
+    
+    public function modificaMonetario() {
+        $monetario = filter_input(INPUT_POST, 'optMonetario', FILTER_SANITIZE_SPECIAL_CHARS);
+        $monetario = (strcmp($monetario,"true") === 0) ? 1 : 0;
+        
+        $usu = new Usuario();
+        $retorno = new Retorno();
+        
+        if(!empty($usu->modificaMonetario($monetario))) :
+            $retorno->setRetorno(0,1,"Operação Modifica Com Sucesso.<br />Faça o Login Novamente.");
+            echo json_encode($retorno->toArray());
+        else :
+            $retorno->setRetorno($usu->getRetorno()->getCodigo(),$usu->getRetorno()->getTipo(),$usu->getRetorno()->getMensagem());
+            echo json_encode($retorno->toArray());
+        endif;
     }
 }

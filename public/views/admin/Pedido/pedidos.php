@@ -70,45 +70,84 @@ if (! defined('ABSPATH') || !isset($_SESSION["UsuarioCodigo"])){
     </div>
     <div class="table-responsive">
         <table id="tabela-pedidos" class="table table-condensed table-striped table-hover">
-            <thead>
-                <tr>
-                    <th class="vertical center-header-table col-xs-1">#</th>
-                    <th class="vertical center-header-table col-xs-4">Produtos</th>
-                    <th class="vertical center-header-table col-xs-2 text-center">Qtde</th>
-                    <th class="vertical center-header-table col-xs-2 text-center">Valor Unitário</th>
-                    <th class="vertical center-header-table col-xs-2">SubTotal</th>
-                    <th class="vertical col-xs-1 text-center"><a class="link-excluir" href="/Area-Restrita/Pedido/remTodosProdutos"><img src="/Public/img/img_delete.png" /><br />Excluir Todos</a></th>
-                </tr>
-            </thead>
-           <tfoot>
-                <tr>
-                    <td colspan="6" class="text-right"><b>Valor Total: <span id="valorTotal" ><?= !empty($this->dados->listaProdutos) ? $this->dados->listaProdutos[count($this->dados->listaProdutos)-1][5] : "0,00" ?></span></b></td>
-                </tr>
-           </tfoot>
-           <tbody>
-                <?php
-                    if(empty($_SESSION['produtos'])):
-                ?>
-                <tr>
-                    <td colspan="6">Nenhum Produto Adicionado</td>
-                </tr>
-                <?php
-                    else:
-                        foreach ($this->dados->listaProdutos as $key => $prod) {
-                ?>
-                <tr>
-                    <td class="center-column"><?= $key+1 ?></td>
-                    <td class="center-column"><?= $prod[1] ?></td>
-                    <td class="center-column"><?= $prod[2] ?></td>
-                    <td class="center-column"><?= $prod[3] ?></td>
-                    <td class="center-column"><?= $prod[4] ?></td>
-                    <td><a data-id="<?= $prod[0] ?>" href="/Area-Restrita/Pedido/remProduto"><img title="Excluir Produto" class="exc" alt="Excluir Produto" src="/Public/img/img_delete.png" /><br />Excluir</a></td>
-                </tr>
-                <?php
-                        }//fimForeach
-                    endif;
-                ?>
-           </tbody>
+            <?php
+                if (!empty($_SESSION['conf'])) :
+            ?>
+                <thead>
+                    <tr>
+                        <th class="vertical center-header-table col-xs-1">#</th>
+                        <th class="vertical center-header-table col-xs-4">Produtos</th>
+                        <th class="vertical center-header-table col-xs-2 text-center">Qtde</th>
+                        <th class="vertical center-header-table col-xs-2 text-center">Valor Unitário</th>
+                        <th class="vertical center-header-table col-xs-2">SubTotal</th>
+                        <th class="vertical col-xs-1 text-center"><a class="link-excluir" href="/Area-Restrita/Pedido/remTodosProdutos"><img src="/Public/img/img_delete.png" /><br />Excluir Todos</a></th>
+                    </tr>
+                </thead>
+               <tfoot>
+                    <tr>
+                        <td colspan="6" class="text-right"><b>Valor Total: <span id="valorTotal" ><?= !empty($this->dados->listaProdutos) ? $this->dados->listaProdutos[count($this->dados->listaProdutos)-1][5] : "0,00" ?></span></b></td>
+                    </tr>
+               </tfoot>
+               <tbody>
+                    <?php
+                        if(empty($_SESSION['produtos'])):
+                    ?>
+                    <tr>
+                        <td colspan="6">Nenhum Produto Adicionado</td>
+                    </tr>
+                    <?php
+                        else:
+                            foreach ($this->dados->listaProdutos as $key => $prod) {
+                    ?>
+                    <tr>
+                        <td class="center-column"><?= $key+1 ?></td>
+                        <td class="center-column"><?= $prod[1] ?></td>
+                        <td class="center-column"><?= $prod[2] ?></td>
+                        <td class="center-column"><?= $prod[3] ?></td>
+                        <td class="center-column"><?= $prod[4] ?></td>
+                        <td><a data-id="<?= $prod[0] ?>" href="/Area-Restrita/Pedido/remProduto"><img title="Excluir Produto" class="exc" alt="Excluir Produto" src="/Public/img/img_delete.png" /><br />Excluir</a></td>
+                    </tr>
+                    <?php
+                            }//fimForeach
+                        endif;
+                    ?>
+               </tbody>
+            <?php
+                else :
+            ?>
+                <thead>
+                    <tr>
+                        <th class="vertical center-header-table col-xs-2">#</th>
+                        <th class="vertical center-header-table col-xs-8">Produtos</th>
+                        <th class="vertical center-header-table col-xs-2 text-center">Qtde</th>
+                        <th class="vertical col-xs-2 text-center"><a class="link-excluir" href="/Area-Restrita/Pedido/remTodosProdutos"><img src="/Public/img/img_delete.png" /><br />Excluir Todos</a></th>
+                    </tr>
+                </thead>
+               <tbody>
+                    <?php
+                        if(empty($_SESSION['produtos'])):
+                    ?>
+                    <tr>
+                        <td colspan="6">Nenhum Produto Adicionado</td>
+                    </tr>
+                    <?php
+                        else:
+                            foreach ($this->dados->listaProdutos as $key => $prod) {
+                    ?>
+                    <tr>
+                        <td class="center-column"><?= $key+1 ?></td>
+                        <td class="center-column"><?= $prod[1] ?></td>
+                        <td class="center-column"><?= $prod[2] ?></td>
+                        <td><a data-id="<?= $prod[0] ?>" href="/Area-Restrita/Pedido/remProduto"><img title="Excluir Produto" class="exc" alt="Excluir Produto" src="/Public/img/img_delete.png" /><br />Excluir</a></td>
+                    </tr>
+                    <?php
+                            }//fimForeach
+                        endif;
+                    ?>
+               </tbody>
+            <?php
+                endif;
+            ?>
         </table>
     </div>
 </article>

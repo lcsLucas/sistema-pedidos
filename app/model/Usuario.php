@@ -117,6 +117,7 @@ if (! defined('ABSPATH')){
                     $_SESSION["UsuarioNome"] = $result["usu_nome"];
                     $_SESSION["UsuarioStatus"] = $result["usu_status"];
                     $_SESSION["token"] = password_hash($result["usu_codigo"].$result["usu_nome"], PASSWORD_DEFAULT);
+                    $_SESSION["config"] = $result["option_monetaria"];
                     if ($logado) :
                         setcookie("usuario_email", $email, time() + (86400 * 30), "/", "", 0, 1);//30 dias
                         setcookie("usuario_senha", $result["usu_senha"], time() + (86400 * 30), "/", "", 0, 1);//30 dias
@@ -218,6 +219,15 @@ if (! defined('ABSPATH')){
             $this->setRetorno(0,3,"Todos os Campos Devem ser Preenchidos");
         endif;
         return false;
+    }
+    
+    public function modificaMonetario($monetario) {
+        $usuDAO = new UsuarioDAO();
+        if(!empty($usuDAO->modificaMonetario($monetario))) :
+            return true;
+        else :
+            $this->setRetorno($usuDAO->getRetorno()->getCodigo(),$usuDAO->getRetorno()->getTipo(),$usuDAO->getRetorno()->getMensagem());
+        endif;
     }
 
     /*Valida Dados do Login*/

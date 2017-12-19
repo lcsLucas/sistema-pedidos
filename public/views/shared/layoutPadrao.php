@@ -26,7 +26,7 @@ if (! defined('ABSPATH')){
 
             <!-- Carrega conteudo -->
             <section id="conteudo" class="container-fluid">
-                <?= $this->content(); ?>
+                <?= $this->content(); ?>                
             </section>
 
             <?php include_once PATH_VIEWS.'shared/rodape.php'; ?>

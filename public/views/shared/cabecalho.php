@@ -71,7 +71,7 @@ if (! defined('ABSPATH')){
                                 <label for="ckMonetario">Valor Monetário</label>
                                 <br />
                                 <label class="switch">
-                                    <input class="<?= !empty($_SESSION["config"])? "initil-input-checked" : "" ?>" id="ckMonetario" type="checkbox"<?= !empty($_SESSION["config"])? "checked" : "" ?>>
+                                    <input class="<?= !empty($_SESSION["config"])? "initil-input-checked" : "" ?>" id="ckMonetario" type="checkbox" <?= !empty($_SESSION["config"])? "checked" : "" ?>>
                                   <span class="slider round"></span>
                                 </label>
                             </li>

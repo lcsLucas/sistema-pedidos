@@ -98,18 +98,34 @@ class PedidoDAO extends Banco
 
 	public function obterItensPedido($pedCodigo)
 	{
-		if (!empty($this->Conectar())) :
-			try {
-				$stms = $this->getCon()->prepare("SELECT prod_codigo, item_qtde, item_preco FROM itens_pedido WHERE ped_codigo = ?");
-				$stms->bindValue(1, $pedCodigo);
+            if (!empty($this->Conectar())) :
+                try {
+                        $stms = $this->getCon()->prepare("SELECT prod_codigo, item_qtde, item_preco FROM itens_pedido WHERE ped_codigo = ?");
+                        $stms->bindValue(1, $pedCodigo);
 
-				$stms->execute();
-				return $stms->fetchAll();
-			} catch (\PDOException $e) {
-				$this->setRetorno($e->getCode(),2,"Erro Ao Fazer a Consulta No Banco de Dados | ".$e->getMessage());
-			}
-		endif;
-		return null;
+                        $stms->execute();
+                        return $stms->fetchAll();
+                } catch (\PDOException $e) {
+                        $this->setRetorno($e->getCode(),2,"Erro Ao Fazer a Consulta No Banco de Dados | ".$e->getMessage());
+                }
+            endif;
+            return null;
+	}
+        
+	public function obterItensPedido2($pedCodigo)
+	{
+            if (!empty($this->Conectar())) :
+                try {
+                        $stms = $this->getCon()->prepare("SELECT prod_codigo, item_qtde FROM itens_pedido WHERE ped_codigo = ?");
+                        $stms->bindValue(1, $pedCodigo);
+
+                        $stms->execute();
+                        return $stms->fetchAll();
+                } catch (\PDOException $e) {
+                        $this->setRetorno($e->getCode(),2,"Erro Ao Fazer a Consulta No Banco de Dados | ".$e->getMessage());
+                }
+            endif;
+            return null;
 	}
 
 	public function verificaDocumentosPedido($codigoPedido)
@@ -164,30 +180,51 @@ class PedidoDAO extends Banco
 
 	public function excluirPedido($codigoPed)
     {
-		if (!empty($this->Conectar())) :
-			try {
-				$stms = $this->getCon()->prepare("DELETE FROM pedido WHERE ped_codigo = ?");
-				$stms->bindValue(1, $codigoPed);
+        if (!empty($this->Conectar())) :
+            try {
+                $stms = $this->getCon()->prepare("DELETE FROM pedido WHERE ped_codigo = ?");
+                $stms->bindValue(1, $codigoPed);
 
-				return $stms->execute();
-			} catch (\PDOException $e) {
-				$this->setRetorno($e->getCode(),2,"Erro Ao Fazer a Consulta No Banco de Dados | ".$e->getMessage());
-			}
-		endif;
-		return null;
+                return $stms->execute();
+            } catch (\PDOException $e) {
+                    $this->setRetorno($e->getCode(),2,"Erro Ao Fazer a Consulta No Banco de Dados | ".$e->getMessage());
+            }
+        endif;
+        return null;
+}
+
+public function obterPedidoExibir($codPedido)
+{
+            if (!empty($this->Conectar())) :
+                    try {
+                    $sql = "SELECT ped.ped_codigo, ped_datahora, cli_nome, form_descricao, usu_nome, sum(item_preco * item_qtde) Total 
+                                    FROM pedido ped INNER JOIN cliente cli ON ped.cli_codigo = cli.cli_codigo
+                                            INNER JOIN form_pagto form ON ped.form_codigo = form.form_codigo
+                                                    INNER JOIN usuario usu ON ped.usu_codigo = usu.usu_codigo
+                                                            INNER JOIN itens_pedido itens ON ped.ped_codigo = itens.ped_codigo
+                                                            WHERE ped.ped_codigo = :pedido
+                                            GROUP BY ped.ped_codigo, ped_datahora, cli_nome, form_descricao, usu_nome";
+                    $stms = $this->getCon()->prepare($sql);
+                            $stms->bindValue(":pedido", $codPedido);
+
+                            $stms->execute();
+                            return $stms->fetch();
+                    } catch (\PDOException $e) {
+                            $this->setRetorno($e->getCode(),2,"Erro Ao Fazer a Consulta No Banco de Dados | ".$e->getMessage());
+                    }
+            endif;
+            return null;
     }
-
-    public function obterPedidoExibir($codPedido)
+    
+    public function obterPedidoExibir2($codPedido)
     {
 		if (!empty($this->Conectar())) :
 			try {
-	    		$sql = "SELECT ped.ped_codigo, ped_datahora, cli_nome, form_descricao, usu_nome, sum(item_preco * item_qtde) Total 
-					FROM pedido ped INNER JOIN cliente cli ON ped.cli_codigo = cli.cli_codigo
-						INNER JOIN form_pagto form ON ped.form_codigo = form.form_codigo
-							INNER JOIN usuario usu ON ped.usu_codigo = usu.usu_codigo
-								INNER JOIN itens_pedido itens ON ped.ped_codigo = itens.ped_codigo
-								WHERE ped.ped_codigo = :pedido
-				            	GROUP BY ped.ped_codigo, ped_datahora, cli_nome, form_descricao, usu_nome";
+	    		$sql = "SELECT ped.ped_codigo, ped_datahora, cli_nome, usu_nome
+					FROM pedido ped INNER JOIN cliente cli ON ped.cli_codigo = cli.cli_codigo						
+                                            INNER JOIN usuario usu ON ped.usu_codigo = usu.usu_codigo
+						INNER JOIN itens_pedido itens ON ped.ped_codigo = itens.ped_codigo
+                                                    WHERE ped.ped_codigo = :pedido";
 	    		$stms = $this->getCon()->prepare($sql);
 				$stms->bindValue(":pedido", $codPedido);
 
@@ -199,26 +236,45 @@ class PedidoDAO extends Banco
 		endif;
 		return null;
     }
+    
+    public function obterItensPedidoExibir($pedCodigo)
+    {
+            if (!empty($this->Conectar())) :
+                    try {
+                            $sql = "SELECT produto.prod_codigo, prod_descricao, item_qtde, item_preco, SUM(item_qtde * item_preco) item_total FROM itens_pedido
+                                    INNER JOIN produto ON itens_pedido.prod_codigo = produto.prod_codigo
+                                    WHERE ped_codigo = ?
+                                            GROUP BY produto.prod_codigo, prod_descricao, item_qtde, item_preco";
+                            $stms = $this->getCon()->prepare($sql);
+                            $stms->bindValue(1, $pedCodigo);
 
-	public function obterItensPedidoExibir($pedCodigo)
-	{
-		if (!empty($this->Conectar())) :
-			try {
-				$sql = "SELECT produto.prod_codigo, prod_descricao, item_qtde, item_preco, SUM(item_qtde * item_preco) item_total FROM itens_pedido
-					INNER JOIN produto ON itens_pedido.prod_codigo = produto.prod_codigo
-				    	WHERE ped_codigo = ?
-				        	GROUP BY produto.prod_codigo, prod_descricao, item_qtde, item_preco";
-				$stms = $this->getCon()->prepare($sql);
-				$stms->bindValue(1, $pedCodigo);
+                            $stms->execute();
+                            return $stms->fetchAll();
+                    } catch (\PDOException $e) {
+                            $this->setRetorno($e->getCode(),2,"Erro Ao Fazer a Consulta No Banco de Dados | ".$e->getMessage());
+                    }
+            endif;
+            return null;
+    }
+    
+    public function obterItensPedidoExibir2($pedCodigo)
+    {
+            if (!empty($this->Conectar())) :
+                    try {
+                            $sql = "SELECT produto.prod_codigo, prod_descricao, item_qtde FROM itens_pedido
+                                    INNER JOIN produto ON itens_pedido.prod_codigo = produto.prod_codigo
+                                    WHERE ped_codigo = ?";
+                            $stms = $this->getCon()->prepare($sql);
+                            $stms->bindValue(1, $pedCodigo);
 
-				$stms->execute();
-				return $stms->fetchAll();
-			} catch (\PDOException $e) {
-				$this->setRetorno($e->getCode(),2,"Erro Ao Fazer a Consulta No Banco de Dados | ".$e->getMessage());
-			}
-		endif;
-		return null;
-	}
+                            $stms->execute();
+                            return $stms->fetchAll();
+                    } catch (\PDOException $e) {
+                            $this->setRetorno($e->getCode(),2,"Erro Ao Fazer a Consulta No Banco de Dados | ".$e->getMessage());
+                    }
+            endif;
+            return null;
+    }
 
     public function obterTodosLimite($pagina, $itens, $statusUsu)
     {

@@ -1,0 +1,8 @@
+ped_num:10
+ped_data:2017-12-20 11:29:14
+ped_obs:
+ven_cod:1
+cli_cod:1
+
+prod_cod:1
+prod_qtde:1000

@@ -34,33 +34,61 @@ if (! defined('ABSPATH') || !isset($_SESSION["UsuarioCodigo"])){
     </div>
     <div style="margin-bottom:20px" class="panel-body">
         <form class="form-inline" id="formaddProd" name="formaddProd" method="post" action="#">
-            <div class="row">
-                <div class="form-group text-center col-sm-6">
-                    <label class="control-label" for="selProduto">Produto</label>
-                    <select style="width: 100%;" id="selProduto" class="form-control select2" required name="selProduto">
-                        <option value=""></option>
-                        <?php
-                            foreach ($this->dados->todosProdutos as $prod) {
-                        ?>
-                            <option data-preco="<?= number_format($prod["prod_preco"], 2, ',', '.') ?>" value="<?= $prod['prod_codigo'] ?>"><?= $prod['prod_descricao'] ?></option>
-                        <?php
-                            }
-                        ?>
-                    </select>
+            <?php
+                if (!empty($_SESSION['config'])) :
+            ?>
+                <div class="row">
+                    <div class="form-group text-center col-sm-6">
+                        <label class="control-label" for="selProduto">Produto</label>
+                        <select style="width: 100%;" id="selProduto" class="form-control select2" required name="selProduto">
+                            <option value=""></option>
+                            <?php
+                                foreach ($this->dados->todosProdutos as $prod) {
+                            ?>
+                                <option data-preco="<?= number_format($prod["prod_preco"], 2, ',', '.') ?>" value="<?= $prod['prod_codigo'] ?>"><?= $prod['prod_descricao'] ?></option>
+                            <?php
+                                }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group text-center col-sm-2">
+                        <label class="control-label" for="txtQtde">Qtde</label>
+                        <input style="width: 100%" type="tel" class="form-control text-center" id="txtQtde" name="txtQtde" maxlength="4" required />
+                    </div>
+                    <div class="form-group text-center col-sm-2">
+                        <label class="control-label" for="txtPreco">Valor Unitário</label>
+                        <input style="width: 100%" type="tel" readonly class="form-control text-center" id="txtValUni" name="txtValUni" />
+                    </div>
+                    <div class="form-group text-center col-sm-2">
+                        <label class="control-label" for="txtSubTot">SubTotal</label>
+                        <input style="width: 100%" type="tel" readonly class="form-control text-center" id="txtSubTot" name="txtSubTot" />
+                    </div>
                 </div>
-                <div class="form-group text-center col-sm-2">
-                    <label class="control-label" for="txtQtde">Qtde</label>
-                    <input style="width: 100%" type="tel" class="form-control text-center" id="txtQtde" name="txtQtde" maxlength="4" required />
+            <?php
+                else :
+            ?>
+                <div class="row">
+                    <div class="form-group text-center col-sm-9">
+                        <label class="control-label" for="selProduto">Produto</label>
+                        <select style="width: 100%;" id="selProduto" class="form-control select2" required name="selProduto">
+                            <option value=""></option>
+                            <?php
+                                foreach ($this->dados->todosProdutos as $prod) {
+                            ?>
+                                <option data-preco="<?= number_format($prod["prod_preco"], 2, ',', '.') ?>" value="<?= $prod['prod_codigo'] ?>"><?= $prod['prod_descricao'] ?></option>
+                            <?php
+                                }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group text-center col-sm-3">
+                        <label class="control-label" for="txtQtde">Qtde</label>
+                        <input style="width: 100%" type="tel" class="form-control text-center" id="txtQtde" name="txtQtde" maxlength="4" required />
+                    </div>
                 </div>
-                <div class="form-group text-center col-sm-2">
-                    <label class="control-label" for="txtPreco">Valor Unitário</label>
-                    <input style="width: 100%" type="tel" readonly class="form-control text-center" id="txtValUni" name="txtValUni" />
-                </div>
-                <div class="form-group text-center col-sm-2">
-                    <label class="control-label" for="txtSubTot">SubTotal</label>
-                    <input style="width: 100%" type="tel" readonly class="form-control text-center" id="txtSubTot" name="txtSubTot" />
-                </div>
-            </div>
+            <?php
+                endif;
+            ?>
             <div class="row">
                 <div class="text-center col-sm-12">
                     <input type="submit" class="btn btn-success btn-lg" id="addProduto" name="addProduto" value="Adicionar Produto" />
@@ -71,7 +99,7 @@ if (! defined('ABSPATH') || !isset($_SESSION["UsuarioCodigo"])){
     <div class="table-responsive">
         <table id="tabela-pedidos" class="table table-condensed table-striped table-hover">
             <?php
-                if (!empty($_SESSION['conf'])) :
+                if (!empty($_SESSION['config'])) :
             ?>
                 <thead>
                     <tr>
@@ -159,18 +187,24 @@ if (! defined('ABSPATH') || !isset($_SESSION["UsuarioCodigo"])){
         </div>
         <div class="panel-body">
             <input type="hidden" name="txtToken" id="txtToken" value="<?= $_SESSION["token"] ?>" />
-            <div class="form-group">
-                <label class="control-label" for="selForm">Forma de Pagto:</label>
-                <select style="width: 100%" id="selForm" class="form-control select2" name="selForm">
-                    <?php
-                        foreach ($this->dados->todasFormPagto as $form) {
-                    ?>
-                        <option value="<?= $form['form_codigo'] ?>"><?= $form['form_descricao'] ?></option>
-                    <?php
-                        }
-                    ?>
-                </select>
-            </div>
+            <?php
+                if (!empty($_SESSION['config'])) :
+            ?>
+                <div class="form-group">
+                    <label class="control-label" for="selForm">Forma de Pagto:</label>
+                    <select style="width: 100%" id="selForm" class="form-control select2" name="selForm">
+                        <?php
+                            foreach ($this->dados->todasFormPagto as $form) {
+                        ?>
+                            <option value="<?= $form['form_codigo'] ?>"><?= $form['form_descricao'] ?></option>
+                        <?php
+                            }
+                        ?>
+                    </select>
+                </div>
+            <?php
+                endif;
+            ?>
             <div class="text-center form-group">
                 <a id="mostrar" class="btn-lg" name="mostrar" href="#">Adicionar Observação</a>
             </div>

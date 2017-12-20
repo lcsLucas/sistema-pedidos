@@ -118,7 +118,8 @@ class HomeController extends Action
     {
         if(isset($_SESSION["UsuarioStatus"])){
             unset($_SESSION["UsuarioCodigo"],$_SESSION["UsuarioNome"],$_SESSION['clienteAtual'],
-                $_SESSION["UsuarioEmail"],$_SESSION["UsuarioStatus"],$_SESSION["token"],$_SESSION['produtos']);
+                $_SESSION["UsuarioEmail"],$_SESSION["UsuarioStatus"],$_SESSION["token"],
+                $_SESSION['produtos'],$_SESSION['config']);
 
             setcookie("usuario_email", "", time() - 3600);
             setcookie("usuario_senha", "", time() - 3600);

@@ -1,0 +1,11 @@
+ped_num:8
+ped_data:2017-12-20 10:40:32
+ped_pag:
+ped_obs:sdsdfadfadfda adf
+ven_cod:1
+cli_cod:1
+
+prod_cod:1
+prod_qtde:1000
+prod_val:0.10
+prod_subT:100,00

@@ -29,17 +29,13 @@ class Pedido
     {
         if(strcmp($token, $_SESSION["token"]) === 0) :
             if (!empty($_SESSION["produtos"])) :
-                if (!empty($form) || $form === 0) :
-                    $pedDAO = new PedidoDAO();
+                $pedDAO = new PedidoDAO();
 
-                    $numPedido = $pedDAO->fazerPedido($form, $obs);
-                    if (!empty($numPedido) && $numPedido > 0) :
-                        return $this->gerarArquivoPedido($numPedido);
-                    else :
-                        $this->setRetorno($pedDAO->getRetorno()->getCodigo(),$pedDAO->getRetorno()->getTipo(),$pedDAO->getRetorno()->getMensagem());
-                    endif;
+                $numPedido = $pedDAO->fazerPedido($form, $obs);
+                if (!empty($numPedido) && $numPedido > 0) :
+                    return $this->gerarArquivoPedido($numPedido);
                 else :
-                    $this->setRetorno(0,3,"Nenhuma Forma de Pagamento Informada");
+                    $this->setRetorno($pedDAO->getRetorno()->getCodigo(),$pedDAO->getRetorno()->getTipo(),$pedDAO->getRetorno()->getMensagem());
                 endif;
             else :
                 $this->setRetorno(0,3,"Nenhum Produto Foi Informado");
@@ -63,19 +59,27 @@ class Pedido
                 {
                     $erro = (fwrite($arq,"ped_num:".$numPedido."\r\n") && !$erro) ? $erro : true;
                     $erro = (fwrite($arq,"ped_data:".$pedido['ped_datahora']."\r\n") && !$erro) ? $erro : true;
-                    $erro = (fwrite($arq,"ped_pag:".$pedido['form_codigo']."\r\n") && !$erro) ? $erro : true;
+                    if (!empty($_SESSION['config'])) :
+                        $erro = (fwrite($arq,"ped_pag:".$pedido['form_codigo']."\r\n") && !$erro) ? $erro : true;
+                    endif;
                     $erro = (fwrite($arq,"ped_obs:".$pedido['ped_obs']."\r\n") && !$erro) ? $erro : true;
                     $erro = (fwrite($arq,"ven_cod:".$pedido['usu_codigo']."\r\n") && !$erro) ? $erro : true;
                     $erro = (fwrite($arq,"cli_cod:".$pedido['cli_codigo']."\r\n") && !$erro) ? $erro : true;
 
                     $pedDAO->desconectar();
-                    $itens = $pedDAO->obterItensPedido($numPedido);
+                    if (!empty($_SESSION['config'])) :
+                        $itens = $pedDAO->obterItensPedido($numPedido);
+                    else :
+                        $itens = $pedDAO->obterItensPedido2($numPedido);
+                    endif;
                     if (!empty($itens)) :
                         foreach ($itens as $key => $produto) {
                             $txtItem = "\r\nprod_cod:".$produto["prod_codigo"];
                             $txtItem .= "\r\nprod_qtde:".$produto["item_qtde"];
-                            $txtItem .= "\r\nprod_val:".$produto["item_preco"];
-                            $txtItem .= "\r\nprod_subT:".number_format($produto["item_preco"] * $produto["item_qtde"],2,',','.');
+                            if (!empty($_SESSION['config'])) :
+                                $txtItem .= "\r\nprod_val:".$produto["item_preco"];
+                                $txtItem .= "\r\nprod_subT:".number_format($produto["item_preco"] * $produto["item_qtde"],2,',','.');
+                            endif;
                             $erro = (fwrite($arq, $txtItem) && !$erro) ? $erro : true;
                         }
                         fclose($arq);
@@ -130,7 +134,11 @@ class Pedido
     public function obterItensPedidoExibir($codigoPedido)
     {
         $PedDAO = new PedidoDAO();
-        $result = $PedDAO->obterItensPedidoExibir($codigoPedido);
+        if(!empty($_SESSION['config']))
+            $result = $PedDAO->obterItensPedidoExibir($codigoPedido);
+        else
+            $result = $PedDAO->obterItensPedidoExibir2($codigoPedido);
+            
         if(count($result) >= 0) :
             return $result;
         else :
@@ -142,7 +150,11 @@ class Pedido
     public function obterPedidoExibir($codPedido)
     {
         $PedDAO = new PedidoDAO();
-        $result = $PedDAO->obterPedidoExibir($codPedido);
+        if(!empty($_SESSION['config']))
+            $result = $PedDAO->obterPedidoExibir($codPedido);
+        else
+            $result = $PedDAO->obterPedidoExibir2($codPedido);
+            
         if(count($result) >= 0) :
             return $result;
         else :

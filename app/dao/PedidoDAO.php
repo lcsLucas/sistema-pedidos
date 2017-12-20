@@ -199,7 +199,7 @@ public function obterPedidoExibir($codPedido)
                     try {
                     $sql = "SELECT ped.ped_codigo, ped_datahora, cli_nome, form_descricao, usu_nome, sum(item_preco * item_qtde) Total 
                                     FROM pedido ped INNER JOIN cliente cli ON ped.cli_codigo = cli.cli_codigo
-                                            INNER JOIN form_pagto form ON ped.form_codigo = form.form_codigo
+                                            LEFT JOIN form_pagto form ON ped.form_codigo = form.form_codigo
                                                     INNER JOIN usuario usu ON ped.usu_codigo = usu.usu_codigo
                                                             INNER JOIN itens_pedido itens ON ped.ped_codigo = itens.ped_codigo
                                                             WHERE ped.ped_codigo = :pedido

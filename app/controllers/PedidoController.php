@@ -56,7 +56,7 @@ class PedidoController extends Action
         if (!empty($codigoPedido) && $codigoPedido > 0) :
             $this->dados->title = "Detalhes do Pedido";
             $this->dados->dadosPedido = (new \App\model\Pedido)->obterPedidoExibir($codigoPedido);
-            $this->dados->itensPedido = (new \App\model\Pedido)->obterItensPedidoExibir($codigoPedido);
+            $this->dados->itensPedido = (new \App\model\Pedido)->obterItensPedidoExibir($codigoPedido);            
             $this->css = "partial_Pedidos";
             $this->js = "partial_descricaoPedido";
             $this->render('detalhesPedido');

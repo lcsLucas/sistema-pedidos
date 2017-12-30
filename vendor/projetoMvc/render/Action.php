@@ -59,6 +59,7 @@ abstract class Action
         $this->param = [];
 
         foreach ($param as $key => $value) {
+            echo "Teste - param- Action.php";
             $this->param[$key] = $value;
         }
     }

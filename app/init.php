@@ -256,10 +256,10 @@ class Init extends Bootstrap
 
         $array[] = array(
             'route' => 'Area-Restrita/Pedido/DetalhesPedido',
-            'method' => 'POST',
+            'method' => 'GET',
             'controller' => 'pedido',
             'action' => 'detalhesPedido',
-            'param' => []
+            'param' => ["id"]
         );
 
         $array[] = array(

@@ -197,15 +197,28 @@ public function obterPedidoExibir($codPedido)
 {
             if (!empty($this->Conectar())) :
                     try {
-                    $sql = "SELECT ped.ped_codigo, ped_datahora, cli_nome, form_descricao, usu_nome, sum(item_preco * item_qtde) Total 
-                                    FROM pedido ped INNER JOIN cliente cli ON ped.cli_codigo = cli.cli_codigo
-                                            LEFT JOIN form_pagto form ON ped.form_codigo = form.form_codigo
-                                                    INNER JOIN usuario usu ON ped.usu_codigo = usu.usu_codigo
-                                                            INNER JOIN itens_pedido itens ON ped.ped_codigo = itens.ped_codigo
-                                                            WHERE ped.ped_codigo = :pedido
-                                            GROUP BY ped.ped_codigo, ped_datahora, cli_nome, form_descricao, usu_nome";
-                    $stms = $this->getCon()->prepare($sql);
-                            $stms->bindValue(":pedido", $codPedido);
+                        if (!empty($_SESSION["UsuarioStatus"])) :
+                            $sql = "SELECT ped.ped_codigo, ped_datahora, cli_nome, form_descricao, usu_nome, sum(item_preco * item_qtde) Total 
+                                            FROM pedido ped INNER JOIN cliente cli ON ped.cli_codigo = cli.cli_codigo
+                                                    LEFT JOIN form_pagto form ON ped.form_codigo = form.form_codigo
+                                                            INNER JOIN usuario usu ON ped.usu_codigo = usu.usu_codigo
+                                                                    INNER JOIN itens_pedido itens ON ped.ped_codigo = itens.ped_codigo
+                                                                    WHERE ped.ped_codigo = :pedido
+                                                    GROUP BY ped.ped_codigo, ped_datahora, cli_nome, form_descricao, usu_nome";
+                        else :
+                            $sql = "SELECT ped.ped_codigo, ped_datahora, cli_nome, form_descricao, usu_nome, sum(item_preco * item_qtde) Total 
+                                            FROM pedido ped INNER JOIN cliente cli ON ped.cli_codigo = cli.cli_codigo
+                                                    LEFT JOIN form_pagto form ON ped.form_codigo = form.form_codigo
+                                                            INNER JOIN usuario usu ON ped.usu_codigo = usu.usu_codigo
+                                                                    INNER JOIN itens_pedido itens ON ped.ped_codigo = itens.ped_codigo
+                                                                    WHERE ped.ped_codigo = :pedido AND usu_codigo = :usuario
+                                                    GROUP BY ped.ped_codigo, ped_datahora, cli_nome, form_descricao, usu_nome";
+                        endif;
+
+                            $stms = $this->getCon()->prepare($sql);
+                            $stms->bindValue(":pedido", $codPedido, \PDO::PARAM_INT);
+                            if (empty($_SESSION["UsuarioStatus"]))
+                                $stms->bindValue(":usuario", $_SESSION["UsuarioCodigo"], \PDO::PARAM_INT);
 
                             $stms->execute();
                             return $stms->fetch();
@@ -220,13 +233,22 @@ public function obterPedidoExibir($codPedido)
     {
 		if (!empty($this->Conectar())) :
 			try {
-	    		$sql = "SELECT ped.ped_codigo, ped_datahora, cli_nome, usu_nome
-					FROM pedido ped INNER JOIN cliente cli ON ped.cli_codigo = cli.cli_codigo						
-                                            INNER JOIN usuario usu ON ped.usu_codigo = usu.usu_codigo
-						INNER JOIN itens_pedido itens ON ped.ped_codigo = itens.ped_codigo
-                                                    WHERE ped.ped_codigo = :pedido";
+                            if (!empty($_SESSION["UsuarioStatus"])) :
+                                $sql = "SELECT ped.ped_codigo, ped_datahora, cli_nome, usu_nome
+                                                FROM pedido ped INNER JOIN cliente cli ON ped.cli_codigo = cli.cli_codigo						
+                                                    INNER JOIN usuario usu ON ped.usu_codigo = usu.usu_codigo
+                                                            WHERE ped.ped_codigo = :pedido";
+                            else :
+                                $sql = "SELECT ped.ped_codigo, ped_datahora, cli_nome, usu_nome
+                                                FROM pedido ped INNER JOIN cliente cli ON ped.cli_codigo = cli.cli_codigo						
+                                                    INNER JOIN usuario usu ON ped.usu_codigo = usu.usu_codigo
+                                                            WHERE ped.ped_codigo = :pedido AND usu_codigo = :usuario";
+                            endif;
+
 	    		$stms = $this->getCon()->prepare($sql);
 				$stms->bindValue(":pedido", $codPedido);
+                                if (empty($_SESSION["UsuarioStatus"]))
+                                    $stms->bindValue(":usuario", $_SESSION["UsuarioCodigo"], \PDO::PARAM_INT);
 
 				$stms->execute();
 				return $stms->fetch();
@@ -296,6 +318,42 @@ public function obterPedidoExibir($codPedido)
 					INNER JOIN cliente ON pedido.cli_codigo =cliente.cli_codigo
 					WHERE pedido.usu_codigo = :usuario
 					GROUP BY pedido.ped_codigo, ped_datahora, ped_status, cli_nome ORDER BY ped_datahora DESC LIMIT :pagina, :itens;";
+          	endif;
+
+            $stms = $this->getCon()->prepare($sql);
+            $stms->bindValue(":pagina", $pagina, \PDO::PARAM_INT);
+            $stms->bindValue(":itens", $itens, \PDO::PARAM_INT);
+			if (empty($statusUsu))
+            	$stms->bindValue(":usuario", (int) $_SESSION["UsuarioCodigo"], \PDO::PARAM_INT);
+            $stms->execute();
+            return $stms->fetchAll();
+          }
+          catch(\PDOException $e)
+          {
+            $this->setRetorno($e->getCode(),2,"Erro Ao Fazer a Consulta No Banco de Dados | ".$e->getMessage());
+          }
+      endif;
+      return null;
+    }
+    
+    public function obterTodosLimite2($pagina, $itens, $statusUsu)
+    {
+      settype($pagina, "Integer");
+      settype($itens, "Integer");
+
+      if(!empty($this->Conectar())) :
+          try
+          {
+          	$sql = "";
+          	if (!empty($statusUsu)) :
+	          	$sql = "SELECT pedido.ped_codigo, ped_datahora, ped_status, cli_nome FROM pedido
+					INNER JOIN cliente ON pedido.cli_codigo =cliente.cli_codigo
+					ORDER BY ped_datahora DESC LIMIT :pagina, :itens;";
+          	else :
+	          	$sql = "SELECT pedido.ped_codigo, ped_datahora, ped_status FROM pedido
+					INNER JOIN cliente ON pedido.cli_codigo =cliente.cli_codigo
+					WHERE pedido.usu_codigo = :usuario
+					ORDER BY ped_datahora DESC LIMIT :pagina, :itens;";
           	endif;
 
             $stms = $this->getCon()->prepare($sql);

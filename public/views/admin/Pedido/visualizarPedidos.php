@@ -12,11 +12,24 @@ if (! defined('ABSPATH') || !isset($_SESSION["UsuarioCodigo"])){
 	        		<td class="text-center definirBackHeader textoHeader" colspan="5">Últimos Pedidos Realizados</td>
 	        	</tr>
 	            <tr>
+                        <?php
+                            if (!empty($_SESSION["config"])) :
+                        ?>
 	                <th class="col-xs-2 text-center">Data <span class="caret"></span></th>
 	                <th class="col-xs-5">Cliente</th>
 	                <th class="col-xs-3 text-center">Valor Total</th>
 	                <th class="col-xs-1 text-center">Status</th>
 	                <th class="col-xs-1 text-center"></th>
+                        <?php
+                            else :
+                        ?>
+	                <th class="col-xs-2 text-center">Data <span class="caret"></span></th>
+	                <th class="col-xs-8">Cliente</th>
+	                <th class="col-xs-1 text-center">Status</th>
+	                <th class="col-xs-1 text-center"></th>
+                        <?php
+                            endif;
+                        ?>
 	            </tr>
 	            <?php
 	                if(empty(count($this->dados->resultado))){
@@ -33,7 +46,13 @@ if (! defined('ABSPATH') || !isset($_SESSION["UsuarioCodigo"])){
 	            	<tr>
 	            		<td class="text-center"><?= date("d/m/Y H:i:s", strtotime($ped["ped_datahora"])) ?></td>
 	            		<td><?= $ped["cli_nome"] ?></td>
+                                <?php
+                                    if (!empty($_SESSION["config"])) :
+                                ?>
 	            		<td class="text-center"><?= number_format($ped["Total"], 2, ',', '.') ?></td>
+                                <?php
+                                    endif;
+                                ?>
 	            		<?php
 	            			$icon = "";
 	            			if ($ped["ped_status"] == "0") :

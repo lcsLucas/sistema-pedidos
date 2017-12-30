@@ -87,9 +87,9 @@ abstract class Bootstrap
         foreach ($this->routes as $key => $value) {
             $urlaux = substr($url, 0, strlen($value['route']));
             if (strcmp($urlaux, $value['route']) === 0) :
-                if (strcmp($value['method'], $_SERVER["REQUEST_METHOD"]) === 0) :
+                if (strcmp($value['method'], $_SERVER["REQUEST_METHOD"]) === 0) :                    
                     $urlaux = substr($url, strlen($value['route']));
-
+                    echo substr($url, strlen($value['route'])." - Bootstrap.php - Arrumar aqui");
                     $url_param = array_filter(explode("/", $urlaux));
                     if (count($value['param']) === count($url_param)) :
                         for ($i=0; $i < count($value['param']); $i++) {

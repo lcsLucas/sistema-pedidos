@@ -165,7 +165,11 @@ class Pedido
 
     public function obterPorLimite($pagina, $itens){
         $PedDAO = new PedidoDAO();
-        $result = $PedDAO->obterTodosLimite($pagina, $itens,$_SESSION["UsuarioStatus"]);
+        if(!empty($_SESSION['config']))
+            $result = $PedDAO->obterTodosLimite($pagina, $itens,$_SESSION["UsuarioStatus"]);
+        else
+            $result = $PedDAO->obterTodosLimite2($pagina, $itens,$_SESSION["UsuarioStatus"]);
+        
         if(count($result) >= 0) :
             return $result;
         else :

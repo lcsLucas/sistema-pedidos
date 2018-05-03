@@ -103,6 +103,21 @@ abstract class Bootstrap
                 endif;
             endif;
         }
+        /** Segue abaixo um código onde a parte ai de cima está funcionando 
+        obs: tomar cuiddo por esse código debaixo não funciona exatamente como o decima, então prestar atenção pra ver as diferenças
+            
+            $urlaux = substr($url, 0, strlen($rotas[$i]["url"]));
+            if ((strcmp($urlaux, $rotas[$i]["url"])) === 0) : 
+                $urlaux = substr($url, strlen($rotas[$i]["url"]));
+                $urlaux = trim($urlaux,"/");                
+                $url_param = array_filter(explode("/", $urlaux));
+
+                if ($rotas[$i]["numParam"] === count($url_param)) {
+                    $achou = true;
+                    $pagina = $rotas[$i]["pagina"];
+                }
+                
+        **/
 
         /*Instancia a controller da rota, e chama a action passada*/
         /*obs: caso nao tenha encontrado nehuma rota, chama a action da página 'error404'
